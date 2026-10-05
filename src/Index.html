@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Asistencia - Practicantes</title>
+  
+  <!-- Importando la fuente Inter para garantizar uniformidad en todos los dispositivos -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      /* PALETA DE COLORES */
+      --color-principal: #2A5A9F;    
+      --color-secundario: #252E51;   
+      --color-acento: #C8102E;       
+      --color-claro: #7EB2E6;        
+      --color-dorado: #F3D03E;       
+      --bg-body: #F4F6F9;            
+      
+      --text-main: #252E51;          
+      --text-muted: #5a667e;         
+      
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --glass-border: rgba(42, 90, 159, 0.2); 
+      
+      /* FUENTE UNIFICADA */
+      --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      
+      --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.05);
+      --shadow-card: 0 8px 30px rgba(42, 90, 159, 0.08); 
+      
+      /* Colores para notificaciones */
+      --toast-success: #28a745;
+      --toast-error: var(--color-acento); 
+    }
+
+    /* RESET UNIVERSAL PARA TIPOGRAFÍA UNIFORME */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body, input, select, button, textarea {
+      font-family: var(--font-family);
+      color: var(--text-main);
+      font-size: 16px; /* Tamaño base estándar */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg-body);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .app-container {
+      width: 90%;
+      max-width: 800px;
+      margin: 20px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      flex: 1;
+    }
+
+    .app-header {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .header-left { display: flex; align-items: center; gap: 15px; }
+
+    .logo-box {
+      width: 55px;
+      height: 55px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .logo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .institution-info h1 { 
+      font-size: 1.1rem; 
+      color: var(--color-principal); 
+      font-weight: 700; 
+      letter-spacing: -0.01em;
+    }
+    .institution-info p { 
+      margin-top: 2px; 
+      font-size: 0.85rem; 
+      color: var(--text-muted); 
+      font-weight: 500;
+    }
+
+    .header-right { display: flex; gap: 10px; }
+
+    .time-badge {
+      background: rgba(42, 90, 159, 0.1); 
+      border: 1px solid rgba(42, 90, 159, 0.25);
+      padding: 8px 15px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: var(--color-principal);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .main-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: rgba(255, 255, 255, 0.5);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 20px 25px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .icon-box {
+      width: 40px; height: 40px;
+      background: rgba(42, 90, 159, 0.1);
+      border-radius: 8px;
+      display: flex; justify-content: center; align-items: center;
+      color: var(--color-principal); font-size: 18px;
+    }
+
+    .title-box h2 { 
+      font-size: 1.3rem; 
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .title-box p { 
+      margin-top: 2px; 
+      font-size: 0.85rem; 
+      color: var(--text-muted); 
+      font-weight: 400;
+    }
+
+    .card-body { padding: 25px; }
+    .form-group { margin-bottom: 20px; }
+    
+    label { 
+      display: block; 
+      margin-bottom: 8px; 
+      font-weight: 600; 
+      font-size: 0.9rem; 
+      color: var(--color-secundario);
+    }
+    
+    select, input[type="date"], input[type="time"] {
+      width: 100%; 
+      padding: 12px 15px; 
+      background: #ffffff;
+      border: 1px solid #ddd; 
+      border-radius: 6px; 
+      font-size: 0.95rem;
+      font-weight: 400;
+      transition: all 0.3s;
+    }
+    
+    select:focus, input:focus {
+      outline: none; 
+      border-color: var(--color-principal);
+      box-shadow: 0 0 0 3px rgba(42, 90, 159, 0.2);
+    }
+
+    .banner-horas {
+      background: var(--color-claro);
+      color: var(--color-secundario);
+      padding: 12px; 
+      border-radius: 6px;
+      margin-bottom: 20px; 
+      text-align: center; 
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: none;
+      border: 1px solid rgba(42, 90, 159, 0.1);
+    }
+    
+    .banner-horas span { 
+      font-weight: 800; 
+      font-size: 1.1rem; 
+      color: var(--color-secundario); 
+    }
+    
+    .row-horas { display: flex; gap: 15px; }
+    .row-horas .form-group { flex: 1; margin-bottom: 0; }
+
+    .card-footer {
+      padding: 20px 25px; 
+      background: rgba(255, 255, 255, 0.3);
+      border-top: 1px solid var(--glass-border);
+      display: flex; justify-content: flex-end; gap: 15px;
+    }
+
+    .btn {
+      padding: 10px 20px; 
+      border-radius: 6px; 
+      font-size: 0.95rem;
+      font-weight: 600; 
+      cursor: pointer; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-outline { 
+      background: #ffffff; 
+      border: 1px solid #ccc; 
+      color: var(--text-muted); 
+    }
+    .btn-outline:hover { 
+      background: #f5f5f5; 
+      color: var(--text-main); 
+      border-color: #999; 
+    }
+    
+    .btn-primary { 
+      background: var(--color-principal); 
+      border: 1px solid var(--color-principal); 
+      color: #ffffff; 
+    }
+    .btn-primary:hover:not(:disabled) { 
+      background: var(--color-secundario); 
+      border-color: var(--color-secundario); 
+    }
+    .btn-primary:disabled { 
+      background: #ccc; 
+      border-color: #ccc; 
+      cursor: not-allowed; 
+      color: #777;
+    }
+
+    .app-footer {
+      width: 100%; 
+      text-align: left; 
+      padding: 20px 0;
+      font-size: 0.85rem; 
+      color: var(--text-muted); 
+      margin-top: auto;
+      font-weight: 400;
+    }
+    .app-footer p { margin-bottom: 5px; }
+    .app-footer strong { 
+      color: var(--color-principal); 
+      font-weight: 600;
+    }
+    
+    #loader-select { 
+      font-size: 0.85rem; 
+      color: var(--color-principal); 
+      display: none; 
+      margin-top: 6px; 
+      font-weight: 500;
+    }
+
+    /* ESTILOS DEL TOAST (Notificación) */
+    .toast-container {
+      position: fixed;
+      bottom: -100px;
+      right: 20px;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: bottom 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 1000;
+      border-left: 5px solid transparent;
+    }
+    .toast-container.show {
+      bottom: 30px;
+    }
+    .toast-success { border-left-color: var(--toast-success); }
+    .toast-success i { color: var(--toast-success); }
+    
+    .toast-error { border-left-color: var(--toast-error); }
+    .toast-error i { color: var(--toast-error); }
+    
+    .toast-text {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Elemento HTML para el Toast -->
+  <div id="toast" class="toast-container">
+    <i id="toast-icon" class="fa-solid"></i>
+    <span id="toast-message" class="toast-text"></span>
+  </div>
+
+  <div class="app-container">
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-box">
+          <img src="https://lh3.googleusercontent.com/d/18T2qw5FsrpZrVN4S3y6xwVFBufKRcaRo" alt="Logo Institucional">
+        </div>
+        <div class="institution-info">
+          <h1>Instituto de Informática</h1>
+          <p>Universidad Nacional de Piura</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="time-badge">
+          <i class="fa-regular fa-calendar"></i>
+          <span id="fecha-actual-texto">Cargando...</span>
+        </div>
+        <div class="time-badge" style="background: var(--color-principal); color: white; border-color: var(--color-principal);">
+          <i class="fa-regular fa-clock"></i>
+          <span id="reloj">00:00:00</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-card">
+      <div class="card-header">
+        <div class="icon-box"><i class="fa-solid fa-users"></i></div>
+        <div class="title-box">
+          <h2>Registro de Asistencia</h2>
+          <p>Complete los campos para registrar la asistencia de practicantes</p>
+        </div>
+      </div>
+
+      <form id="formularioAsistencia">
+        <div class="card-body">
+          
+          <div class="form-group">
+            <label for="practicante">Nombre del Practicante</label>
+            <select id="practicante" required disabled>
+              <option value="" disabled selected>Cargando practicantes activos...</option>
+            </select>
+            <div id="loader-select"><i class="fa-solid fa-circle-notch fa-spin"></i> Conectando con Google Sheets...</div>
+          </div>
+
+          <div id="info-horas" class="banner-horas">
+            Total horas acumuladas: <span id="horas-cumplidas">0</span> h
+          </div>
+
+          <div class="form-group">
+            <label for="fecha">Fecha</label>
+            <input type="date" id="fecha" required>
+          </div>
+
+          <div class="row-horas">
+            <div class="form-group">
+              <label for="hora-inicio">Hora de Inicio (Formato 24 horas)</label>
+              <input type="time" id="hora-inicio" required>
+            </div>
+            <div class="form-group">
+              <label for="hora-fin">Hora de Fin (Formato 24 horas)</label>
+              <input type="time" id="hora-fin" required>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="card-footer">
+          <button type="button" class="btn btn-outline" id="btn-limpiar">
+            <i class="fa-regular fa-trash-can"></i> Limpiar
+          </button>
+          <button type="submit" class="btn btn-primary" id="btn-registrar" disabled>
+            <i class="fa-regular fa-circle-check"></i> Registrar Asistencia
+          </button>
+        </div>
+      </form>
+    </main>
+
+    <footer class="app-footer">
+      <p>&copy; 2026 Instituto de Informática — Universidad Nacional de Piura. Todos los derechos reservados.</p>
+      <p>Diseñado y desarrollado por: <strong>Gabriela Tahis Mauriola Valdiviezo</strong></p>
+    </footer>
+  </div>
+
+  <script>
+    // --- LÓGICA DEL TOAST ---
+    function mostrarToast(mensaje, tipo) {
+      const toast = document.getElementById('toast');
+      const toastIcon = document.getElementById('toast-icon');
+      const toastMessage = document.getElementById('toast-message');
+      
+      toast.className = 'toast-container';
+      toastIcon.className = 'fa-solid';
+      
+      if(tipo === 'success') {
+        toast.classList.add('toast-success');
+        toastIcon.classList.add('fa-circle-check');
+      } else {
+        toast.classList.add('toast-error');
+        toastIcon.classList.add('fa-circle-exclamation');
+      }
+      
+      toastMessage.textContent = mensaje;
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 4000);
+    }
+
+    // --- RESTO DE LA LÓGICA ---
+    function actualizarReloj() {
+      const ahora = new Date();
+      document.getElementById('reloj').textContent = 
+        String(ahora.getHours()).padStart(2, '0') + ':' + 
+        String(ahora.getMinutes()).padStart(2, '0') + ':' + 
+        String(ahora.getSeconds()).padStart(2, '0');
+      
+      const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const fechaTexto = ahora.toLocaleDateString('es-ES', opcionesFecha);
+      document.getElementById('fecha-actual-texto').textContent = fechaTexto.charAt(0).toUpperCase() + fechaTexto.slice(1);
+    }
+    setInterval(actualizarReloj, 1000);
+    actualizarReloj();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+      
+      document.getElementById('loader-select').style.display = 'block';
+      // Simulación de carga si no se está en el entorno de Google Apps Script
+      if(typeof google !== 'undefined' && google.script) {
+        google.script.run.withSuccessHandler(llenarSelectPracticantes).obtenerPracticantesActivos();
+      }
+    });
+
+    function llenarSelectPracticantes(practicantes) {
+      const select = document.getElementById('practicante');
+      select.innerHTML = '<option value="" disabled selected>Seleccione un practicante...</option>';
+      
+      practicantes.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p.nombre;
+        option.dataset.horas = p.horas;
+        option.dataset.fila = p.fila;
+        option.textContent = p.nombre;
+        select.appendChild(option);
+      });
+      
+      select.disabled = false;
+      document.getElementById('btn-registrar').disabled = false;
+      document.getElementById('loader-select').style.display = 'none';
+    }
+
+    document.getElementById('practicante').addEventListener('change', function() {
+      const optionSeleccionada = this.options[this.selectedIndex];
+      if(optionSeleccionada.value) {
+        const horasTotales = parseFloat(optionSeleccionada.dataset.horas).toFixed(2);
+        document.getElementById('horas-cumplidas').textContent = horasTotales; 
+        document.getElementById('info-horas').style.display = 'block';
+      }
+    });
+
+    document.getElementById('btn-limpiar').addEventListener('click', () => {
+      document.getElementById("formularioAsistencia").reset();
+      document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+      document.getElementById('info-horas').style.display = 'none';
+    });
+
+    document.getElementById('formularioAsistencia').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const btnRegistrar = document.getElementById('btn-registrar');
+      btnRegistrar.disabled = true;
+      btnRegistrar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
+      
+      const selectPracticante = document.getElementById('practicante');
+      const opcion = selectPracticante.options[selectPracticante.selectedIndex];
+      
+      const datos = {
+        nombre: opcion.value,
+        fila: opcion.dataset.fila,
+        fecha: document.getElementById('fecha').value,
+        horaInicio: document.getElementById('hora-inicio').value,
+        horaFin: document.getElementById('hora-fin').value
+      };
+
+      if(typeof google !== 'undefined' && google.script) {
+        google.script.run
+          .withSuccessHandler(function(respuesta) {
+            if(respuesta.success) {
+              mostrarToast("¡Asistencia registrada correctamente!", "success");
+              opcion.dataset.horas = respuesta.nuevasHoras; 
+              document.getElementById('btn-limpiar').click();
+            } else {
+              mostrarToast("Error al registrar: " + respuesta.error, "error");
+            }
+            restaurarBoton(btnRegistrar);
+          })
+          .withFailureHandler(function(error) {
+            mostrarToast("Error de conexión: " + error.message, "error");
+            restaurarBoton(btnRegistrar);
+          })
+          .registrarAsistencia(datos);
+      } else {
+        // Fallback si se prueba fuera de Apps Script
+        setTimeout(() => {
+          mostrarToast("Simulación: Asistencia registrada (Solo diseño)", "success");
+          restaurarBoton(btnRegistrar);
+        }, 1000);
+      }
+    });
+
+    function restaurarBoton(btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-regular fa-circle-check"></i> Registrar Asistencia';
+    }
+  </script>
+</body>
+</html>
